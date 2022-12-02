@@ -1,0 +1,841 @@
+import warnings
+from datetime import datetime
+import sqlite3
+from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt5.QtWidgets import QDialog, QApplication, QWidget
+from PyQt5 import QtCore, QtGui, QtWidgets
+import sys
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+now = datetime.now()
+datum = now.strftime("%d.%m.%Y")
+now = datetime.now()
+zeit = now.strftime("%H:%M:%S")
+
+class Ui_Kasse(object):
+    def setupUi(self, Dialog):
+        Dialog.setObjectName("Dialog")
+        Dialog.resize(1024, 860)
+        Dialog.setAutoFillBackground(False)
+        Dialog.setStyleSheet("")
+        self.Getraenke = QtWidgets.QPushButton(Dialog)
+        self.Getraenke.setGeometry(QtCore.QRect(10, 10, 121, 41))
+        self.Getraenke.setObjectName("Getraenke")
+        self.Waffeln = QtWidgets.QPushButton(Dialog)
+        self.Waffeln.setGeometry(QtCore.QRect(10, 60, 121, 41))
+        self.Waffeln.setObjectName("Waffeln")
+        self.Bubbletea = QtWidgets.QPushButton(Dialog)
+        self.Bubbletea.setGeometry(QtCore.QRect(10, 110, 121, 41))
+        self.Bubbletea.setObjectName("Bubbletea")
+        self.Label = QtWidgets.QLabel(Dialog)
+        self.Label.setGeometry(QtCore.QRect(610, 410, 171, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.Label.setFont(font)
+        self.Label.setObjectName("label")
+        self.pushButton_22 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.result_it())
+        self.pushButton_22.setGeometry(QtCore.QRect(600, 320, 181, 51))
+        self.pushButton_22.setObjectName("pushButton_22")
+        self.pushButton_23 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.remove_it())
+        self.pushButton_23.setGeometry(QtCore.QRect(820, 320, 181, 51))
+        self.pushButton_23.setObjectName("pushButton_23")
+        self.stackedWidget = QtWidgets.QStackedWidget(Dialog)
+        self.stackedWidget.setGeometry(QtCore.QRect(160, 10, 411, 471))
+        self.stackedWidget.setObjectName("stackedWidget")
+# ----------------------------------------------------Getränke Auswahlbuttons-------------------------------------------
+        # Preise können individuell angepasst werden
+        self.Getraenke_2 = QtWidgets.QWidget()
+        self.Getraenke_2.setObjectName("Getraenke_2")
+        self.pushButton = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it('2.50'))
+        self.pushButton.setGeometry(QtCore.QRect(0, 0, 131, 111))
+        self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it1('1.50'))
+        self.pushButton_2.setGeometry(QtCore.QRect(0, 120, 131, 111))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_3 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it2('3.50'))
+        self.pushButton_3.setGeometry(QtCore.QRect(0, 240, 131, 111))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_4 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it3('5.50'))
+        self.pushButton_4.setGeometry(QtCore.QRect(0, 360, 131, 111))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.pushButton_5 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it4('1,99'))
+        self.pushButton_5.setGeometry(QtCore.QRect(140, 0, 131, 111))
+        self.pushButton_5.setObjectName("pushButton_5")
+        self.pushButton_6 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it5("4,55"))
+        self.pushButton_6.setGeometry(QtCore.QRect(140, 120, 131, 111))
+        self.pushButton_6.setObjectName("pushButton_6")
+        self.pushButton_7 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it6("6,50"))
+        self.pushButton_7.setGeometry(QtCore.QRect(140, 240, 131, 111))
+        self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_8 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it7("8,50"))
+        self.pushButton_8.setGeometry(QtCore.QRect(140, 360, 131, 111))
+        self.pushButton_8.setObjectName("pushButton_8")
+        self.pushButton_9 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it8("12,50"))
+        self.pushButton_9.setGeometry(QtCore.QRect(280, 0, 131, 111))
+        self.pushButton_9.setObjectName("pushButton_9")
+        self.pushButton_10 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it9())
+        self.pushButton_10.setGeometry(QtCore.QRect(280, 120, 131, 111))
+        self.pushButton_10.setObjectName("pushButton_10")
+        self.pushButton_11 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it10())
+        self.pushButton_11.setGeometry(QtCore.QRect(280, 240, 131, 111))
+        self.pushButton_11.setObjectName("pushButton_11")
+        self.pushButton_12 = QtWidgets.QPushButton(self.Getraenke_2, clicked=lambda: self.add_it11())
+        self.pushButton_12.setGeometry(QtCore.QRect(280, 360, 131, 111))
+        self.pushButton_12.setObjectName("pushButton_12")
+        self.stackedWidget.addWidget(self.Getraenke_2)
+        self.Waffeln_3 = QtWidgets.QWidget()
+        self.Waffeln_3.setObjectName("Waffeln_3")
+# ----------------------------------------------------Waffeln Auswahlbuttons--------------------------------------------
+        # Preise können individuell angepasst werden
+        self.pushButton_13 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it12("1,99"))
+        self.pushButton_13.setGeometry(QtCore.QRect(0, 0, 131, 111))
+        self.pushButton_13.setObjectName("pushButton_13")
+        self.pushButton_14 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it13("4,55"))
+        self.pushButton_14.setGeometry(QtCore.QRect(0, 120, 131, 111))
+        self.pushButton_14.setObjectName("pushButton_14")
+        self.pushButton_15 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it14("6,50"))
+        self.pushButton_15.setGeometry(QtCore.QRect(0, 240, 131, 111))
+        self.pushButton_15.setObjectName("pushButton_15")
+        self.pushButton_16 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it15("8,50"))
+        self.pushButton_16.setGeometry(QtCore.QRect(0, 360, 131, 111))
+        self.pushButton_16.setObjectName("pushButton_16")
+        self.pushButton_17 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it16("12,50"))
+        self.pushButton_17.setGeometry(QtCore.QRect(140, 0, 131, 111))
+        self.pushButton_17.setObjectName("pushButton_17")
+        self.pushButton_18 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it17())
+        self.pushButton_18.setGeometry(QtCore.QRect(140, 120, 131, 111))
+        self.pushButton_18.setObjectName("pushButton_18")
+        self.pushButton_19 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it18())
+        self.pushButton_19.setGeometry(QtCore.QRect(140, 360, 131, 111))
+        self.pushButton_19.setObjectName("pushButton_19")
+        self.pushButton_20 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it19())
+        self.pushButton_20.setGeometry(QtCore.QRect(140, 240, 131, 111))
+        self.pushButton_20.setObjectName("pushButton_20")
+        self.pushButton_21 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it20())
+        self.pushButton_21.setGeometry(QtCore.QRect(280, 0, 131, 111))
+        self.pushButton_21.setObjectName("pushButton_21")
+        self.pushButton_24 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it21())
+        self.pushButton_24.setGeometry(QtCore.QRect(280, 120, 131, 111))
+        self.pushButton_24.setObjectName("pushButton_24")
+        self.pushButton_25 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it22())
+        self.pushButton_25.setGeometry(QtCore.QRect(280, 360, 131, 111))
+        self.pushButton_25.setObjectName("pushButton_25")
+        self.pushButton_26 = QtWidgets.QPushButton(self.Waffeln_3, clicked=lambda: self.add_it23())
+        self.pushButton_26.setGeometry(QtCore.QRect(280, 240, 131, 111))
+        self.pushButton_26.setObjectName("pushButton_26")
+        self.stackedWidget.addWidget(self.Waffeln_3)
+        self.Bubbletea_2 = QtWidgets.QWidget()
+        self.Bubbletea_2.setObjectName("Bubbletea_2")
+# ----------------------------------------------------Bubbletea Auswahlbuttons------------------------------------------
+        # Preise können individuell angepasst werden
+        self.pushButton_27 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it24("5,50"))
+        self.pushButton_27.setGeometry(QtCore.QRect(0, 0, 131, 111))
+        self.pushButton_27.setObjectName("pushButton_27")
+        self.pushButton_28 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it25("4,00"))
+        self.pushButton_28.setGeometry(QtCore.QRect(0, 120, 131, 111))
+        self.pushButton_28.setObjectName("pushButton_28")
+        self.pushButton_29 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it26("8,00"))
+        self.pushButton_29.setGeometry(QtCore.QRect(0, 240, 131, 111))
+        self.pushButton_29.setObjectName("pushButton_29")
+        self.pushButton_30 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it27("6,50"))
+        self.pushButton_30.setGeometry(QtCore.QRect(0, 360, 131, 111))
+        self.pushButton_30.setObjectName("pushButton_30")
+        self.pushButton_31 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it28("3,00"))
+        self.pushButton_31.setGeometry(QtCore.QRect(140, 240, 131, 111))
+        self.pushButton_31.setObjectName("pushButton_31")
+        self.pushButton_32 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it29("3,50"))
+        self.pushButton_32.setGeometry(QtCore.QRect(140, 120, 131, 111))
+        self.pushButton_32.setObjectName("pushButton_32")
+        self.pushButton_33 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it30())
+        self.pushButton_33.setGeometry(QtCore.QRect(140, 0, 131, 111))
+        self.pushButton_33.setObjectName("pushButton_33")
+        self.pushButton_34 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it31())
+        self.pushButton_34.setGeometry(QtCore.QRect(140, 360, 131, 111))
+        self.pushButton_34.setObjectName("pushButton_34")
+        self.pushButton_35 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it32())
+        self.pushButton_35.setGeometry(QtCore.QRect(280, 240, 131, 111))
+        self.pushButton_35.setObjectName("pushButton_35")
+        self.pushButton_36 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it33())
+        self.pushButton_36.setGeometry(QtCore.QRect(280, 120, 131, 111))
+        self.pushButton_36.setObjectName("pushButton_36")
+        self.pushButton_37 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it34())
+        self.pushButton_37.setGeometry(QtCore.QRect(280, 0, 131, 111))
+        self.pushButton_37.setObjectName("pushButton_37")
+        self.pushButton_38 = QtWidgets.QPushButton(self.Bubbletea_2, clicked=lambda: self.add_it35())
+        self.pushButton_38.setGeometry(QtCore.QRect(280, 360, 131, 111))
+        self.pushButton_38.setObjectName("pushButton_38")
+# -----------------------------------------------Tastatur---------------------------------------------------------------
+        # Tasten 0-9, 5, 10, 20, 50, DEL, .(Punkt)
+        self.pushButton_42 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it37('1'))
+        self.pushButton_42.setGeometry(QtCore.QRect(280, 500, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_42.setFont(font)
+        self.pushButton_42.setObjectName("pushButton_42")
+        self.pushButton_43 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it38('2'))
+        self.pushButton_43.setGeometry(QtCore.QRect(380, 500, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_43.setFont(font)
+        self.pushButton_43.setObjectName("pushButton_43")
+        self.pushButton_44 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it39('3'))
+        self.pushButton_44.setGeometry(QtCore.QRect(480, 500, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_44.setFont(font)
+        self.pushButton_44.setObjectName("pushButton_44")
+        self.pushButton_45 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it40('4'))
+        self.pushButton_45.setGeometry(QtCore.QRect(280, 590, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_45.setFont(font)
+        self.pushButton_45.setObjectName("pushButton_45")
+        self.pushButton_46 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it41('5'))
+        self.pushButton_46.setGeometry(QtCore.QRect(380, 590, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_46.setFont(font)
+        self.pushButton_46.setObjectName("pushButton_46")
+        self.pushButton_47 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it42('6'))
+        self.pushButton_47.setGeometry(QtCore.QRect(480, 590, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_47.setFont(font)
+        self.pushButton_47.setObjectName("pushButton_47")
+        self.pushButton_48 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it43('7'))
+        self.pushButton_48.setGeometry(QtCore.QRect(280, 680, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_48.setFont(font)
+        self.pushButton_48.setObjectName("pushButton_48")
+        self.pushButton_49 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it44('8'))
+        self.pushButton_49.setGeometry(QtCore.QRect(380, 680, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_49.setFont(font)
+        self.pushButton_49.setObjectName("pushButton_49")
+        self.pushButton_50 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it45('9'))
+        self.pushButton_50.setGeometry(QtCore.QRect(480, 680, 91, 81))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_50.setFont(font)
+        self.pushButton_50.setObjectName("pushButton_50")
+        self.pushButton_57 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it51('5'))
+        self.pushButton_57.setGeometry(QtCore.QRect(160, 500, 101, 81))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setWeight(50)
+        self.pushButton_57.setFont(font)
+        self.pushButton_57.setObjectName("pushButton_57")
+        self.pushButton_54 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it46('10'))
+        self.pushButton_54.setGeometry(QtCore.QRect(160, 590, 101, 81))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setWeight(50)
+        self.pushButton_54.setFont(font)
+        self.pushButton_54.setObjectName("pushButton_54")
+        self.pushButton_55 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it47('20'))
+        self.pushButton_55.setGeometry(QtCore.QRect(160, 680, 101, 81))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setWeight(50)
+        self.pushButton_55.setFont(font)
+        self.pushButton_55.setObjectName("pushButton_55")
+        self.pushButton_56 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it48('50'))
+        self.pushButton_56.setGeometry(QtCore.QRect(160, 770, 101, 71))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        font.setWeight(50)
+        self.pushButton_56.setFont(font)
+        self.pushButton_56.setObjectName("pushButton_56")
+        self.pushButton_53 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it49('.'))
+        self.pushButton_53.setGeometry(QtCore.QRect(480, 770, 91, 71))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.pushButton_53.setFont(font)
+        self.pushButton_53.setObjectName("pushButton_53")
+        self.pushButton_51 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.add_it50('0'))
+        self.pushButton_51.setGeometry(QtCore.QRect(380, 770, 91, 71))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_51.setFont(font)
+        self.pushButton_51.setObjectName("pushButton_51")
+        self.pushButton_52 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.del_it('DEL'))
+        self.pushButton_52.setGeometry(QtCore.QRect(280, 770, 91, 71))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_52.setFont(font)
+        self.pushButton_52.setObjectName("pushButton_52")
+
+# ---------------------------------------------Bestellung/Preis Anzeige-------------------------------------------------
+        self.stackedWidget.addWidget(self.Bubbletea_2)
+        self.tableWidget = QtWidgets.QTableWidget(Dialog)
+        self.tableWidget.setGeometry(QtCore.QRect(600, 10, 401, 301))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.tableWidget.setFont(font)
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setHorizontalHeaderLabels(('Bestellung', 'Preis'))
+        self.tableWidget.setColumnWidth(0, 250)  # Tabelle einstellen
+        self.tableWidget.setColumnWidth(1, 100)  # Tabelle einstellen
+
+# ---------------------------------------------Listen die befüllt werden------------------------------------------------
+        self.result = []
+        self.result2 = []
+        self.Bestellung = []
+        self.Bestellung2 = []
+        self.Datum = []
+        self.Zeit = []
+
+# -----------------------------------------------Anzeigen---------------------------------------------------------------
+        # Gesamtbetrag Anzeige
+        self.lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit.setGeometry(QtCore.QRect(820, 410, 181, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.lineEdit.setFont(font)
+        self.lineEdit.setObjectName("lineEdit")
+        # BAR/EC Anzeige
+        self.lineEdit_2 = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit_2.setGeometry(QtCore.QRect(820, 490, 181, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.lineEdit_2.setFont(font)
+        self.lineEdit_2.setObjectName("lineEdit_2")
+# -------------------------------------------BAR/EC/NEU Buttons---------------------------------------------------------
+        # BAR Button
+        self.pushButton_39 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.pay_bar())
+        self.pushButton_39.setGeometry(QtCore.QRect(610, 490, 81, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_39.setFont(font)
+        self.pushButton_39.setObjectName("BAR")
+        # EC Button
+        self.pushButton_40 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.pay_ec())
+        self.pushButton_40.setGeometry(QtCore.QRect(700, 490, 81, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.pushButton_40.setFont(font)
+        self.pushButton_40.setObjectName("EC")
+        # NEU Button
+        self.pushButton_41 = QtWidgets.QPushButton(Dialog, clicked=lambda: self.new())
+        self.pushButton_41.setGeometry(QtCore.QRect(820, 650, 181, 91))
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.pushButton_41.setFont(font)
+        self.pushButton_41.setObjectName("NEU")
+
+# ------------------------------------------------------Preisanzeigen---------------------------------------------------
+        # Rückgeld Anzeige
+        self.lineEdit_3 = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit_3.setGeometry(QtCore.QRect(820, 570, 181, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.lineEdit_3.setFont(font)
+        self.lineEdit_3.setText("")
+        self.lineEdit_3.setObjectName("lineEdit_3")
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3.setGeometry(QtCore.QRect(610, 570, 171, 61))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
+
+        self.retranslateUi(Dialog)
+        self.stackedWidget.setCurrentIndex(0)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+# ----------------------------------------------Getränke/Waffeln/Bubbletea----------------------------------------------
+        # Funktionen um Getränke/Waffeln/Bubbletea auszuwählen
+        self.Getraenke.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.Getraenke_2))
+
+        self.Waffeln.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.Waffeln_3))
+
+        self.Bubbletea.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.Bubbletea_2))
+
+# ------------------------------------------------Getränke Buttons------------------------------------------------------
+
+    def add_it(self, pressed):
+        item = self.pushButton.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('2,50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(2.50)
+        self.result2.append(2.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it1(self, pressed):
+        item = self.pushButton_2.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('1.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(1.50)
+        self.result2.append(1.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it2(self, pressed):
+        item = self.pushButton_3.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('3.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(3.50)
+        self.result2.append(3.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it3(self, pressed):
+        item = self.pushButton_4.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('5.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(5.50)
+        self.result2.append(5.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it4(self, pressed):
+        item = self.pushButton_5.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('1.99 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(1.99)
+        self.result2.append(1.99)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it5(self, pressed):
+        item = self.pushButton_5.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('1.99 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(1.99)
+        self.result2.append(1.99)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it6(self, pressed):
+        item = self.pushButton_5.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('1.99 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(1.99)
+        self.result2.append(1.99)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+# ------------------------------------------------Waffel Buttons--------------------------------------------------------
+    def add_it12(self, pressed):
+        item = self.pushButton_13.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('4.55 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(4.55)
+        self.result2.append(4.55)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it13(self, pressed):
+        item = self.pushButton_14.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('6.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(6.50)
+        self.result2.append(6.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it14(self, pressed):
+        item = self.pushButton_15.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('8.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(8.50)
+        self.result2.append(8.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it15(self, pressed):
+        item = self.pushButton_16.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('12.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(12.50)
+        self.result2.append(12.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it16(self, pressed):
+        item = self.pushButton_16.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('12.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(12.50)
+        self.result2.append(12.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it17(self, pressed):
+        item = self.pushButton_16.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('12.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(12.50)
+        self.result2.append(12.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+# ------------------------------------------------Bubbletea Buttons-----------------------------------------------------
+    def add_it24(self, pressed):
+        item = self.pushButton_27.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('4.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(4.50)
+        self.result2.append(4.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it25(self, pressed):
+        item = self.pushButton_28.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('6.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(6.50)
+        self.result2.append(6.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it26(self, pressed):
+        item = self.pushButton_29.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('8.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(8.50)
+        self.result2.append(8.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it27(self, pressed):
+        item = self.pushButton_30.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('2.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(2.50)
+        self.result2.append(2.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it28(self, pressed):
+        item = self.pushButton_30.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('2.50 €'))
+        self.lineEdit.setText(pressed + " €")
+        self.result.append(2.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+    def add_it29(self, pressed):
+        item = self.pushButton_31.text()
+        rowcount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowcount)
+        self.tableWidget.setItem(rowcount, 0, QTableWidgetItem(item))
+        self.tableWidget.setItem(rowcount, 1, QTableWidgetItem('2.50 €'))
+        self.lineEdit.setText(pressed + "€")
+        self.result.append(2.50)
+        self.Bestellung.append(item)
+        self.Bestellung2.append(item)
+        self.Datum.append(datum)
+        self.Zeit.append(zeit)
+
+# -----------------------------------------------------Tastatur---------------------------------------------------------
+    # Funtionen für die Tastatur
+    def add_it37(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it38(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it39(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it40(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it41(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it42(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it43(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it44(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it45(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it49(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it50(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def del_it(self, pressed):
+        text = self.lineEdit_2.text()
+        self.lineEdit_2.setText(text[:len(text) - 1])
+
+    def add_it46(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it47(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it48(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+    def add_it51(self, pressed):
+        self.lineEdit_2.setText(f'{self.lineEdit_2.text()}{pressed}')
+
+# -----------------------------------------------Bestellung Bestä./Abbre. Button----------------------------------------
+    # Bestellung abbrechen/löschen
+    def remove_it(self):
+        self.Datum.pop()
+        self.Zeit.pop()
+        self.Bestellung2.pop()
+        self.result2.pop()
+        try:
+            clicked = self.tableWidget.currentRow()
+            self.tableWidget.removeRow(clicked)
+            self.lineEdit.setText(self.lineEdit.text())
+            self.result.pop(clicked)
+            summe = sum(self.result)
+            summe = ("%.2f" % summe)
+            self.lineEdit.setText(str(summe) + " €")
+            summe = sum(self.result)
+            summe = ("%.2f" % summe)
+            rest = self.lineEdit_2.text()
+            rest = float(rest)
+            summe = float(summe)
+            rst = rest - summe
+            rst = ("%.2f" % rst)
+            self.lineEdit_3.setText(str(rst) + " €")
+        except:
+            pass
+
+    # Ergebnis Funktion und Anzeige
+    def result_it(self):
+        summe = sum(self.result)
+        summe = ("%.2f" % summe)
+        self.lineEdit.setText(str(summe) + " €")
+
+    # Funktion BAR button
+    def pay_bar(self):
+        try:
+            summe = sum(self.result)
+            summe = ("%.2f" % summe)
+            rest = self.lineEdit_2.text()
+            rest = float(rest)
+            summe = float(summe)
+            rst = rest - summe
+            rst = ("%.2f" % rst)
+            self.lineEdit_3.setText(str(rst) + " €")
+        except:
+            pass
+
+    # Funktion EC button
+    def pay_ec(self):
+        summe = sum(self.result)
+        summe = ("%.2f" % summe)
+        self.lineEdit_2.setText(str(summe) + " €")
+        self.lineEdit_3.setText("0,00 €")
+
+    # Funktionen Neu Button
+    def new(self):
+        self.tableWidget.setGeometry(QtCore.QRect(600, 10, 401, 301))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.tableWidget.setFont(font)
+        self.tableWidget.setObjectName("tableWidget")
+        self.tableWidget.setColumnCount(0)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setHorizontalHeaderLabels(('Bestellung', 'Preis'))
+        self.tableWidget.setColumnWidth(0, 250)  # Tabelle einstellen
+        self.tableWidget.setColumnWidth(1, 100)  # Tabelle einstellen
+        self.lineEdit.clear()
+        self.lineEdit.setText('0,00')
+        self.lineEdit_2.clear()
+        self.lineEdit_3.setText('0,00')
+
+# ----------------------------------------------Datenbank---------------------------------------------------------------
+
+        # SQL Datenbank erstellen und befüllen
+        con = sqlite3.connect("Kasse.db")
+        cur = con.cursor()
+        cur.execute("CREATE TABLE IF NOT EXISTS Kasse(Datum TEXT, Zeit TEXT, Bestellung BLOB, Preis TEXT)")
+
+        for (a, b, c, d) in zip(self.Datum, self.Zeit, self.Bestellung2, self.result2):
+            item = a, b, c, d
+            cur.execute("INSERT INTO Kasse (Datum, Zeit, Bestellung, Preis) VALUES (?, ?, ?, ?)", item)
+        con.commit()
+        con.close()
+
+        # restult liste löschen
+        self.result.clear()
+
+    # Button Text/Bezeichnung kann individuell angepasst werden
+    def retranslateUi(self, Dialog):
+        _translate = QtCore.QCoreApplication.translate
+        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        self.Getraenke.setText(_translate("Dialog", "Getränke"))
+        self.Waffeln.setText(_translate("Dialog", "Waffeln"))
+        self.Bubbletea.setText(_translate("Dialog", "Bubbletea"))
+        self.Label.setText(_translate("Dialog", "Gesamtbetrag:"))
+        self.pushButton_22.setText(_translate("Dialog", "Bestellung bestätigen"))
+        self.pushButton_23.setText(_translate("Dialog", "Bestellung abbrechen"))
+        self.pushButton.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_2.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_3.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_4.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_5.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_6.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_7.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_8.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_9.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_10.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_11.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_12.setText(_translate("Dialog", "Getränk"))
+        self.pushButton_13.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_14.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_15.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_16.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_17.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_18.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_19.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_20.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_21.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_24.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_25.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_26.setText(_translate("Dialog", "Waffeln"))
+        self.pushButton_27.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_28.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_29.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_30.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_31.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_32.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_33.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_34.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_35.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_36.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_37.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_38.setText(_translate("Dialog", "Bubbletea"))
+        self.pushButton_39.setText(_translate("Dialog", "BAR"))
+        self.pushButton_40.setText(_translate("Dialog", "EC"))
+        self.pushButton_41.setText(_translate("Dialog", "NEU"))
+        self.pushButton_42.setText(_translate("Dialog", "1"))
+        self.pushButton_43.setText(_translate("Dialog", "2"))
+        self.pushButton_44.setText(_translate("Dialog", "3"))
+        self.pushButton_45.setText(_translate("Dialog", "4"))
+        self.pushButton_46.setText(_translate("Dialog", "5"))
+        self.pushButton_47.setText(_translate("Dialog", "6"))
+        self.pushButton_48.setText(_translate("Dialog", "7"))
+        self.pushButton_49.setText(_translate("Dialog", "8"))
+        self.pushButton_50.setText(_translate("Dialog", "9"))
+        self.pushButton_54.setText(_translate("Dialog", "10 €"))
+        self.pushButton_55.setText(_translate("Dialog", "20 €"))
+        self.pushButton_56.setText(_translate("Dialog", "50 €"))
+        self.pushButton_57.setText(_translate("Dialog", "5 €"))
+        self.pushButton_53.setText(_translate("Dialog", "."))
+        self.pushButton_51.setText(_translate("Dialog", "0"))
+        self.pushButton_52.setText(_translate("Dialog", "DEL"))
+        self.label_3.setText(_translate("Dialog", "Rückgeld:"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Dialog = QtWidgets.QDialog()
+    ui = Ui_Kasse()
+    ui.setupUi(Dialog)
+    Dialog.show()
+    sys.exit(app.exec_())
